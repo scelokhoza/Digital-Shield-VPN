@@ -1,15 +1,17 @@
 import socket
 import ssl
+import threading
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.fernet import Fernet
 
 
 class VPNClient:
-    def __init__(self, server_address='0.0.0.0', port=8080, server_hostname='YourName'):
+    def __init__(self, server_address='0.0.0.0', port=8080, server_hostname='scelo', local_port=8888):
         self.server_address = server_address
         self.port = port
         self.server_hostname = server_hostname
+        self.local_port = local_port
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.context = ssl.create_default_context()
 
@@ -41,14 +43,8 @@ class VPNClient:
             )
             self.secure_socket.sendall(encrypted_symmetric_key)
 
-            while True:
-                url = input("Enter the URL to fetch: ")
-                encrypted_message = self.cipher.encrypt(url.encode())
-                self.secure_socket.sendall(encrypted_message)
-
-                encrypted_response = self.secure_socket.recv(4096)
-                response = self.cipher.decrypt(encrypted_response)
-                print(f"Received: {response.decode()}")
+            # Start local proxy to forward traffic through the VPN
+            self.start_local_proxy()
 
         except ssl.SSLError as e:
             print(f"SSL error: {e}")
@@ -57,11 +53,47 @@ class VPNClient:
         finally:
             self.secure_socket.close()
 
+    def start_local_proxy(self):
+        local_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        local_socket.bind(('127.0.0.1', self.local_port))
+        local_socket.listen(5)
+        print(f"Local proxy started on port {self.local_port}")
+
+        while True:
+            client_conn, client_addr = local_socket.accept()
+            threading.Thread(target=self.handle_local_connection, args=(client_conn,)).start()
+
+    def handle_local_connection(self, client_conn):
+        try:
+            while True:
+                data = client_conn.recv(4096)
+                if not data:
+                    break
+                encrypted_data = self.cipher.encrypt(data)
+                self.secure_socket.sendall(encrypted_data)
+
+                response_chunks = []
+                while True:
+                    encrypted_response = self.secure_socket.recv(4096)
+                    if not encrypted_response:
+                        break
+                    response_chunks.append(encrypted_response)
+                    if len(encrypted_response) < 4096:
+                        break
+
+                encrypted_response = b''.join(response_chunks)
+                response = self.cipher.decrypt(encrypted_response)
+                client_conn.sendall(response)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        finally:
+            client_conn.close()
+
 
 if __name__ == "__main__":
     client = VPNClient()
     client.connect_to_vpn()
-
 
 
         

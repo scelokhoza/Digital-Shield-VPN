@@ -4,8 +4,6 @@ import threading
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.fernet import Fernet
-import requests
-
 
 class VPNServer:
     def __init__(self, server_address='0.0.0.0', port=8080, certfile='server.crt', keyfile='server.key'):
@@ -71,12 +69,9 @@ class VPNServer:
                 if not encrypted_data:
                     break
 
-                data = cipher.decrypt(encrypted_data).decode()
-                print(f"Received data: {data}")
-
-                # Assuming the data is a URL to fetch
-                response = requests.get(data)
-                encrypted_response = cipher.encrypt(response.content)
+                data = cipher.decrypt(encrypted_data)
+                response = self.forward_to_destination(data)
+                encrypted_response = cipher.encrypt(response)
                 ssl_client_socket.sendall(encrypted_response)
 
         except ssl.SSLError as e:
@@ -86,6 +81,14 @@ class VPNServer:
         finally:
             ssl_client_socket.close()
 
+    def forward_to_destination(self, data):
+        # Placeholder: Modify this method to forward data to the appropriate destination
+        destination_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        destination_socket.connect(('destination_address', 80))
+        destination_socket.sendall(data)
+        response = destination_socket.recv(4096)
+        destination_socket.close()
+        return response
 
 if __name__ == '__main__':
     server = VPNServer()
