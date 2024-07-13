@@ -7,7 +7,6 @@ body {
     color: #333;
 }
 
-/* Header Styles */
 header {
     display: flex;
     justify-content: space-between;
@@ -18,7 +17,7 @@ header {
 }
 
 .logo img {
-    height: 50px;
+    height: 200px;
 }
 
 nav ul {
@@ -42,11 +41,10 @@ nav ul li a:hover {
     text-decoration: underline;
 }
 
-/* Hero Section Styles */
 .hero {
     text-align: center;
     padding: 4rem 2rem;
-    background: url('path/to/your/background-image.jpg') no-repeat center center/cover;
+    background-color: #34495e;
     color: #ecf0f1;
 }
 
@@ -74,7 +72,59 @@ nav ul li a:hover {
     background-color: #c0392b;
 }
 
-/* Footer Styles */
+.features, .pricing, .contact {
+    padding: 2rem;
+    text-align: center;
+}
+
+.features h2, .pricing h2, .contact h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.feature, .plan {
+    margin: 1rem 0;
+}
+
+.feature h3, .plan h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+.social-icons {
+    margin-top: 20px;
+}
+.social-icons a {
+    margin-right: 50px;
+    font-size: 24px;
+    color: #333;
+    text-decoration: none;
+}
+.social-icons a i {
+    font-size: 40px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.fa-facebook {
+    color: #3b5998; 
+}
+
+.fa-twitter {
+    color: #1da1f2; 
+}
+
+.fa-linkedin {
+    color: #0077b5; 
+}
+
+.fa-whatsapp {
+    color: #25d366; 
+}
+
+.social-icons a:hover i {
+    transform: scale(1.2);
+}
+
+
 footer {
     text-align: center;
     padding: 1rem 2rem;
