@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from vpn_client import VPNClient
+from client.vpn_client import VPNClient
 
 
 app = Flask(__name__)

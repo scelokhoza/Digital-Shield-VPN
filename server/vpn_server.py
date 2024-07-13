@@ -1,6 +1,7 @@
-import socket
 import ssl
+import socket
 import threading
+from urllib.parse import urlparse
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.fernet import Fernet
@@ -99,18 +100,45 @@ class VPNServer:
             client_socket.close()
 
     def forward_to_destination(self, data):
-        # Placeholder: Modify this method to forward data to the appropriate destination
         try:
+            headers = data.split(b'\r\n')
+            host_header = next((h for h in headers if b'Host:' in h), None)
+            if not host_header:
+                raise ValueError("No Host header found")
+            
+            host = host_header.split(b' ')[1].decode('utf-8')
+            
+
+            url = urlparse(f'http://{host}')
+            
+            port = url.port or 80
+            if port == 443:
+                url = urlparse(f'https://{host}')
+            
             destination_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             destination_socket.settimeout(30)
-            destination_socket.connect(('destination_address', 80))
+
+            if url.scheme == 'https':
+                context = ssl.create_default_context()
+                destination_socket = context.wrap_socket(destination_socket, server_hostname=url.hostname)
+            
+            destination_socket.connect((url.hostname, port))
             destination_socket.sendall(data)
-            response = destination_socket.recv(4096)
+            
+            response_data = b""
+            while True:
+                chunk = destination_socket.recv(4096)
+                if not chunk:
+                    break
+                response_data += chunk
+            
             destination_socket.close()
-            return response
+            return response_data
+        
         except Exception as e:
             print(f"Error forwarding data to destination: {e}")
             return b""
+
 
 if __name__ == '__main__':
     server = VPNServer()
