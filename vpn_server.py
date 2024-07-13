@@ -44,11 +44,15 @@ class VPNServer:
 
     def handle_client(self, client_socket):
         try:
+            # Set socket timeout to handle idle connections
+            client_socket.settimeout(60)
+            
             ssl_client_socket = ssl.wrap_socket(client_socket,
                                                 server_side=True,
                                                 certfile=self.certfile,
                                                 keyfile=self.keyfile,
                                                 ssl_version=ssl.PROTOCOL_TLS)
+            
             # Send the server's public key to the client
             ssl_client_socket.sendall(self.public_pem)
 
@@ -65,31 +69,50 @@ class VPNServer:
             cipher = Fernet(symmetric_key)
 
             while True:
-                encrypted_data = ssl_client_socket.recv(4096)
-                if not encrypted_data:
+                try:
+                    encrypted_data = ssl_client_socket.recv(4096)
+                    if not encrypted_data:
+                        break
+
+                    data = cipher.decrypt(encrypted_data)
+                    response = self.forward_to_destination(data)
+                    encrypted_response = cipher.encrypt(response)
+                    ssl_client_socket.sendall(encrypted_response)
+                except socket.timeout:
+                    print("Socket timed out. Closing connection.")
+                    break
+                except ssl.SSLError as e:
+                    print(f"SSL error: {e}")
+                    break
+                except Exception as e:
+                    print(f"An error occurred while handling client data: {e}")
                     break
 
-                data = cipher.decrypt(encrypted_data)
-                response = self.forward_to_destination(data)
-                encrypted_response = cipher.encrypt(response)
-                ssl_client_socket.sendall(encrypted_response)
-
         except ssl.SSLError as e:
-            print(f"SSL error: {e}")
+            print(f"SSL error during initial handshake: {e}")
+        except socket.timeout:
+            print("Initial socket connection timed out. Closing connection.")
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"An error occurred during client handling: {e}")
         finally:
             ssl_client_socket.close()
+            client_socket.close()
 
     def forward_to_destination(self, data):
         # Placeholder: Modify this method to forward data to the appropriate destination
-        destination_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        destination_socket.connect(('destination_address', 80))
-        destination_socket.sendall(data)
-        response = destination_socket.recv(4096)
-        destination_socket.close()
-        return response
+        try:
+            destination_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            destination_socket.settimeout(30)
+            destination_socket.connect(('destination_address', 80))
+            destination_socket.sendall(data)
+            response = destination_socket.recv(4096)
+            destination_socket.close()
+            return response
+        except Exception as e:
+            print(f"Error forwarding data to destination: {e}")
+            return b""
 
 if __name__ == '__main__':
     server = VPNServer()
     server.start_vpn()
+
