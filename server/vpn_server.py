@@ -8,6 +8,16 @@ from cryptography.fernet import Fernet
 
 class VPNServer:
     def __init__(self, server_address='0.0.0.0', port=8080, certfile='server.crt', keyfile='server.key'):
+        """
+        Initializes the VPNServer with the given server address, port, certificate, and key files.
+        Generates RSA keys for secure communication.
+        
+        Parameters:
+        server_address (str): IP address to bind the server to.
+        port (int): Port to listen on.
+        certfile (str): Path to the SSL certificate file.
+        keyfile (str): Path to the SSL key file.
+        """
         self.server_address = server_address
         self.port = port
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,7 +34,12 @@ class VPNServer:
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
 
+
     def start_vpn(self):
+        """
+        Starts the VPN server, binding to the specified address and port.
+        Listens for incoming connections and spawns a new thread to handle each client.
+        """
         try:
             self.server_socket.bind((self.server_address, self.port))
             self.server_socket.listen(5)
@@ -43,7 +58,15 @@ class VPNServer:
         finally:
             self.server_socket.close()
 
+
     def handle_client(self, client_socket):
+        """
+        Handles communication with a connected client.
+        Performs SSL handshake, exchanges encryption keys, and forwards data to the destination server.
+        
+        Parameters:
+        client_socket (socket.socket): The socket connected to the client.
+        """
         try:
             # Set socket timeout to handle idle connections
             client_socket.settimeout(60)
@@ -99,7 +122,17 @@ class VPNServer:
             ssl_client_socket.close()
             client_socket.close()
 
+
     def forward_to_destination(self, data):
+        """
+        Forwards client data to the intended destination server and returns the response.
+        
+        Parameters:
+        data (bytes): The data received from the client to be forwarded.
+        
+        Returns:
+        bytes: The response data from the destination server.
+        """
         try:
             headers = data.split(b'\r\n')
             host_header = next((h for h in headers if b'Host:' in h), None)
@@ -108,7 +141,6 @@ class VPNServer:
             
             host = host_header.split(b' ')[1].decode('utf-8')
             
-
             url = urlparse(f'http://{host}')
             
             port = url.port or 80
@@ -138,6 +170,7 @@ class VPNServer:
         except Exception as e:
             print(f"Error forwarding data to destination: {e}")
             return b""
+
 
 
 if __name__ == '__main__':
