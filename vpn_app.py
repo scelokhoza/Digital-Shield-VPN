@@ -13,12 +13,12 @@ def index():
 
 
 
-@app.route('/proxy', methods=['POST'])
-def proxy():
-    if request.method=='POST':
-        url = request.form['url']
-        response = vpn_client.fetch_url(url)
-        return response
+# @app.route('/proxy', methods=['POST'])
+# def proxy():
+#     if request.method=='POST':
+#         url = request.form['url']
+#         response = vpn_client.fetch_url(url)
+#         return response
     
 
 if __name__ == '__main__':
