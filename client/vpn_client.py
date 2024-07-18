@@ -6,6 +6,7 @@ from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.fernet import Fernet
 
 
+
 class VPNClient:
     def __init__(self, server_address='0.0.0.0', port=8080, server_hostname='scelo', local_port=8888):
         self.server_address = server_address
