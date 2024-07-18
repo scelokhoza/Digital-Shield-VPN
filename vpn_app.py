@@ -1,4 +1,4 @@
-import subprocess
+import ssl
 from flask import Flask, render_template, request, jsonify
 from client.vpn_client import VPNClient
 
@@ -20,10 +20,11 @@ def vpn_page():
 
 @app.route('/start-vpn', methods=['POST'])
 def start_vpn():
-    vpn_client.connect_to_vpn()
-    # return jsonify({'success': True})
-    # else:
-    #     return jsonify({'success': False}), 500
+    try:
+        vpn_client.connect_to_vpn()
+        return jsonify({'success': True})
+    except (ssl.SSLError, Exception):
+        return jsonify({'success': False}), 500
 
 
 if __name__ == '__main__':

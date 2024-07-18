@@ -80,11 +80,13 @@ class VPNClient:
 
             # Start local proxy to forward traffic through the VPN
             self.start_local_proxy()
-
+        
         except ssl.SSLError as e:
             print(f"SSL error: {e}")
+            raise
         except Exception as e:
             print(f"An error occurred: {e}")
+            raise
         finally:
             self.secure_socket.close()
 
