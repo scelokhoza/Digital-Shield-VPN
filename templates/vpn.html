@@ -34,27 +34,49 @@
         button:hover {
             background-color: #0056b3;
         }
+        select {
+            padding: 0.5em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin: 1em 0;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Start VPN Connection</h1>
+        <label for="payment-method">Select Payment Method:</label>
+        <select id="payment-method">
+            <option value="credit-card">Credit Card</option>
+            <option value="paypal">PayPal</option>
+            <option value="bank-transfer">Bank Transfer</option>
+        </select>
         <button onclick="startVPN()">Start VPN</button>
     </div>
 
     <script>
         function startVPN() {
-            fetch('/start-vpn', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('VPN started successfully!');
-                    } else {
-                        alert('Failed to start VPN.');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+            const paymentMethod = document.getElementById('payment-method').value;
+
+            fetch('/start-vpn', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ paymentMethod })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('VPN started successfully!');
+                } else {
+                    alert('Failed to start VPN.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
     </script>
 </body>
 </html>
+
