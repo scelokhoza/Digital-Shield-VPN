@@ -1,18 +1,52 @@
 import socket
+import toml
 import ssl
 import threading
+from dataclasses import dataclass
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.fernet import Fernet
 
 
 
+@dataclass
+class VPNData:
+    server_address: str
+    server_hostname: str
+    port: int
+    local_port: int
+    
+
+class Configuration:
+    def __init__(self, target_file: str) -> None:
+        self.file = target_file
+        
+    
+    def load_config_data(self) -> VPNData:
+        with open(self.file, 'r') as config_file:
+            config_data = toml.load(config_file)
+        
+        return VPNData(
+            server_address=config_data['server_address'],
+            server_hostname=config_data['server_hostname'],
+            port=config_data['port'],
+            local_port=config_data['local_port']
+        )
+
+
+
 class VPNClient:
-    def __init__(self, server_address='0.0.0.0', port=8080, server_hostname='scelo', local_port=8888):
-        self.server_address = server_address
-        self.port = port
-        self.server_hostname = server_hostname
-        self.local_port = local_port
+    
+    client_config: Configuration
+    
+    
+    def __init__(self, config_file: str):
+        self.client_config = Configuration(config_file)
+        self.configuration: VPNData = self.client_config.load_config_data()
+        self.server_address = self.configuration.server_address
+        self.port = self.configuration.port
+        self.server_hostname = self.configuration.server_hostname
+        self.local_port = self.configuration.local_port
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.context = ssl.create_default_context()
 

@@ -8,6 +8,5 @@ founder_email = "sceloprince749@gmail.com"
 [server]
 server_address = "127.0.0.1"
 port = 8080
-protocol = "ws"
 server_hostname = "scelo"
 local_port = 8888
