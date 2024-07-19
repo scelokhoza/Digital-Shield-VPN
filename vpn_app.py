@@ -20,11 +20,18 @@ def vpn_page():
 
 @app.route('/start-vpn', methods=['POST'])
 def start_vpn():
+    # data = request.get_json()
+    # payment_method = data.get('paymentMethod', 'not specified')  
     try:
+        
+        # print(f'Payment method selected: {payment_method}')
         vpn_client.connect_to_vpn()
         return jsonify({'success': True})
     except (ssl.SSLError, Exception):
         return jsonify({'success': False}), 500
+
+
+
 
 
 if __name__ == '__main__':
