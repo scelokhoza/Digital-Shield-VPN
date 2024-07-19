@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Start VPN</title>
+    <title>Error</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,6 +19,9 @@
             padding: 2em;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: red;
         }
         button {
             padding: 1em 2em;
@@ -38,27 +40,9 @@
 </head>
 <body>
     <div class="container">
-        <h1>Digital-Shiled-VPN</h1>
-        <button onclick="startVPN()">Start VPN</button>
+        <h1>Failed to Connect to VPN</h1>
+        <p>Please try again later or contact support.</p>
+        <button onclick="location.href='/'">Go to Home</button>
     </div>
-
-    <script>
-        function startVPN() {
-            fetch('/start-vpn', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('VPN started successfully!');
-                    } else {
-                        alert('Failed to start VPN.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    location.href = '/error';
-                });
-        window.location.href = "vpn_started.html";
-        }
-    </script>
 </body>
 </html>

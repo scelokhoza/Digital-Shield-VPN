@@ -13,18 +13,19 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/get-started', methods=['POST'])
-def vpn_page():
-    return render_template('vpn.html')
+@app.route('/start_vpn')
+def start_page():
+    return render_template('start_vpn.html')
+
+
+@app.route('/error')
+def error():
+    return render_template('error.html')
 
 
 @app.route('/start-vpn', methods=['POST'])
 def start_vpn():
-    # data = request.get_json()
-    # payment_method = data.get('paymentMethod', 'not specified')  
-    try:
-        
-        # print(f'Payment method selected: {payment_method}')
+    try: 
         vpn_client.connect_to_vpn()
         return jsonify({'success': True})
     except (ssl.SSLError, Exception):
