@@ -27,10 +27,10 @@ class Configuration:
             config_data = toml.load(config_file)
         
         return VPNData(
-            server_address=config_data['server_address'],
-            server_hostname=config_data['server_hostname'],
-            port=config_data['port'],
-            local_port=config_data['local_port']
+            server_address=config_data['server']['server_address'],
+            server_hostname=config_data['server']['server_hostname'],
+            port=config_data['server']['port'],
+            local_port=config_data['server']['local_port']
         )
 
 
@@ -129,7 +129,7 @@ class VPNClient:
 
 
 if __name__ == "__main__":
-    client = VPNClient()
+    client = VPNClient('config.toml')
     client.connect_to_vpn()
 
 
