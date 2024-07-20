@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Login</title>
+    <title>Login - Digital Shield VPN</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
-    <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="google.css">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='google.css') }}" rel="stylesheet">
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <style>
         .container {
             max-width: 300px;
@@ -27,7 +29,7 @@
             padding: 10px;
             font-size: 16px;
         }
-        body{
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -40,33 +42,14 @@
 </head>
 <body>
     <div class="container">
+        <h2>Login to Digital Shield VPN</h2>
         <div id="my-signin2"></div>
-        <form class="login-form">
+        <form class="login-form" onsubmit="return false;">
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
+            <button type="submit" onclick="loginWithEmailPassword()">Login</button>
         </form>
     </div>
-    <script>
-        function onSuccess(googleUser) {
-            console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
-        }
-        function onFailure(error) {
-            console.log(error);
-        }
-        function renderButton() {
-            gapi.signin2.render('my-signin2', {
-                'scope': 'profile email',
-                'width': 240,
-                'height': 50,
-                'longtitle': true,
-                'theme': 'dark',
-                'onsuccess': onSuccess,
-                'onfailure': onFailure
-            });
-        }
-    </script>
-    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 </body>
 </html>
 
