@@ -1,8 +1,6 @@
 import ssl
 import socket
 import threading
-import select
-import time
 from urllib.parse import urlparse
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes

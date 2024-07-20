@@ -58,6 +58,7 @@ class VPNClient:
         self.symmetric_key = Fernet.generate_key()
         self.cipher = Fernet(self.symmetric_key)
 
+
     def connect_to_vpn(self):
         try:
             self.secure_socket.connect((self.server_address, self.port))
@@ -104,6 +105,7 @@ class VPNClient:
         try:
             while True:
                 data = client_conn.recv(4096)
+                print(data)
                 if not data:
                     break
                 encrypted_data = self.cipher.encrypt(data)
