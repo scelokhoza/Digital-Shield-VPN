@@ -72,21 +72,21 @@ nav ul li a:hover {
     background-color: #c0392b;
 }
 
-.features, .pricing, .contact {
+.features, .pricing, .contact, .services {
     padding: 2rem;
     text-align: center;
 }
 
-.features h2, .pricing h2, .contact h2 {
+.features h2, .pricing h2, .contact h2, .services h2 {
     font-size: 2rem;
     margin-bottom: 1rem;
 }
 
-.feature, .plan {
+.feature, .plan, .services {
     margin: 1rem 0;
 }
 
-.feature h3, .plan h3 {
+.feature h3, .plan h3 , .service h3{
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
 }

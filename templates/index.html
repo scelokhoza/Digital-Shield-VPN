@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> 
     <style>
-        .feature {
+        .feature , .service{
             background-color: #f8f9fa; 
             border-radius: 15px;
             padding: 20px; 
@@ -15,12 +15,12 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
         }
 
-        .feature p {
+        .feature p, .service p {
             display: none;
             margin-top: 10px;
         }
 
-        .feature h3 {
+        .feature h3 , .service h3{
             cursor: pointer;
             margin: 0;
         }
@@ -34,7 +34,7 @@
         <nav>
             <ul>
                 <li><a href="#">Home</a></li>
-                <li><a href="#">Services</a></li>
+                <li><a href="#services">Services</a></li>
                 <li><a href="#features">About</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
@@ -45,7 +45,7 @@
         <p>Unleash the Power of Digital Shield VPN - Your Ultimate Data Protector!</p>
         <button class="cta-button" onclick="location.href='/start_vpn'">Get Started</button>
     </section>
-    <section class="features">
+    <section class="features" id="features">
         <h2>Why Choose Digital Shield?</h2>
         <div class="feature">
             <h3>Secure Your Data</h3>
@@ -68,13 +68,32 @@
             <p>Nope, we believe in complete anonymity. Your online activities are your business, not ours. Your secrets are safe with us.</p>
         </div>
     </section>
+    <section class="services" id="services">
+        <h2>Digital-Shield-VPN Services</h2>
+        <div class="service">
+           <h3>Encryption</h3>
+           <p>Digital-Shield-VPN encrypts your internet traffic, making it difficult for anyone to intercept and read your data.</p> 
+        </div>
+        <div class="service">
+            <h3>Tunneling</h3>
+            <p>Digital-Shield-VPN creates a secure encrypted tunnel of between your device and the VPN server, touting all your internet traffic through this tunnel.</p>
+        </div>
+        <div class="service">
+            <h3>IP Masking</h3>
+            <p>Digital-Shield-VPN  masks your IP address, making it appear as if you are accessing the internet from a differnt location.</p>
+        </div>
+        <div class="service">
+            <h3>End-To-End Encryption</h3>
+            <p>Digital-Shield-VPN provides end-to-end encryption, ensuring that only you and the VPN server can read the data.</p>
+        </div>
+    </section>
     <section class="pricing">
         <h2>Flexible Plans</h2>
         <div class="plan">
             <h3>Free Trial</h3>
             <p>No credit required</p>
             <p>Essential protection for individuals.</p>
-            <a href="#" class="cta-button">Get Started</a>
+            <button class="cta-button" onclick="location.href='/start_vpn'">Get Started</button>
         </div>
         <div class="plan">
             <p>If you enjoy using our product, consider supporting us!</p>
@@ -91,7 +110,7 @@
             <p>Founder & Security Expert</p>
         </div>
     </section>
-    <section class="contact">
+    <section class="contact" id="contact">
         <h2>Contact Us</h2>
         <p><b>Personal Email:</b> <a href="mailto:sceloprince749@gmail.com">sceloprince749@gmail.com</a></p>
         <p><b>Work Email:</b> <a href="mailto:skhoza023@student.wethinkcode.co.za">skhoza023@student.wethinkcode.co.za</a></p>
@@ -108,15 +127,27 @@
         <p>&copy; 2024 Digital Shield VPN. All Rights Reserved.</p>
     </footer>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const features = document.querySelectorAll('.feature');
-            features.forEach(feature => {
-                feature.querySelector('h3').addEventListener('click', () => {
-                    const p = feature.querySelector('p');
-                    p.style.display = p.style.display === 'block' ? 'none' : 'block';
-                });
+    document.addEventListener('DOMContentLoaded', () => {
+        const features = document.querySelectorAll('.feature');
+        const services = document.querySelectorAll('.service');
+
+        const toggleParagraph = (element) => {
+            const p = element.querySelector('p');
+            p.style.display = p.style.display === 'block' ? 'none' : 'block';
+        };
+
+        features.forEach(feature => {
+            feature.querySelector('h3').addEventListener('click', () => {
+                toggleParagraph(feature);
             });
         });
-    </script>
+
+        services.forEach(service => {
+            service.querySelector('h3').addEventListener('click', () => {
+                toggleParagraph(service);
+            });
+        });
+    });
+</script>
 </body>
 </html>
