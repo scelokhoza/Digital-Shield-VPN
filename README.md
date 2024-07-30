@@ -43,3 +43,29 @@ Suggestions and Improvements
 
     Configuration and Flexibility:
         Allow configuration of server addresses, ports, and other parameters via configuration files or environment variables.
+
+
+
+
+
+Client Connects to VPN Server:
+
+    The client establishes a secure connection to the VPN server using SSL/TLS. This connection is established after exchanging encryption keys.
+
+Client Sends Data:
+
+    The client sets up a local proxy server (often on 127.0.0.1:local_port) that listens for incoming connections from the local machine.
+    When a local application sends data to this local proxy (which could be an HTTP/HTTPS request), the client receives this data through its local proxy server.
+
+Data Forwarding:
+
+    The client then encrypts this data (using the symmetric key) and sends it through the secure connection to the VPN server.
+
+VPN Server Forwards Data:
+
+    The VPN server receives the encrypted data from the client, decrypts it, and forwards it to the intended destination (e.g., a website or web service).
+    The response from the destination server is then sent back through the VPN server to the client, where it is re-encrypted and sent back to the local proxy.
+
+Response Handling:
+
+    The local proxy on the client machine receives the response data and sends it back to the application that made the initial request.

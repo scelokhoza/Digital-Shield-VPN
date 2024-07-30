@@ -6,7 +6,7 @@ founder_email = "sceloprince749@gmail.com"
 
 
 [server]
-server_address = "127.0.0.1"
+server_address = "20.20.16.152"
 port = 8080
 server_hostname = "scelo"
 local_port = 8888

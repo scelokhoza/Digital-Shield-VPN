@@ -1,12 +1,12 @@
 import socket
-import toml
 import ssl
 import threading
 import logging
-from dataclasses import dataclass
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.fernet import Fernet
+import toml
+from dataclasses import dataclass
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -34,8 +34,6 @@ class Configuration:
         )
 
 class VPNClient:
-    client_config: Configuration
-
     def __init__(self, config_file: str):
         self.client_config = Configuration(config_file)
         self.configuration: VPNData = self.client_config.load_config_data()
@@ -46,6 +44,7 @@ class VPNClient:
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.context = ssl.create_default_context()
 
+        # Disable hostname and certificate verification for self-signed certificates
         self.context.check_hostname = False
         self.context.verify_mode = ssl.CERT_NONE
 
@@ -58,9 +57,11 @@ class VPNClient:
             self.secure_socket.connect((self.server_address, self.port))
             logging.info(f"Connected to VPN server at {self.server_address}:{self.port}")
 
+            # Receive server's public key
             server_public_key_pem = self.secure_socket.recv(4096)
             server_public_key = serialization.load_pem_public_key(server_public_key_pem)
 
+            # Encrypt the symmetric key with the server's public key and send it
             encrypted_symmetric_key = server_public_key.encrypt(
                 self.symmetric_key,
                 padding.OAEP(
@@ -71,6 +72,7 @@ class VPNClient:
             )
             self.secure_socket.sendall(encrypted_symmetric_key)
 
+            # Start local proxy to forward traffic through the VPN
             self.start_local_proxy()
 
         except ssl.SSLError as e:
@@ -79,8 +81,6 @@ class VPNClient:
         except Exception as e:
             logging.error(f"An error occurred: {e}")
             raise
-       
-
         finally:
             self.secure_socket.close()
 
@@ -100,7 +100,7 @@ class VPNClient:
                 data = client_conn.recv(4096)
                 if not data:
                     break
-                logging.info(f"Data sent to VPN server: {len(data)} bytes")
+                logging.info(f"Received data from local connection: {len(data)} bytes")
                 encrypted_data = self.cipher.encrypt(data)
                 self.secure_socket.sendall(encrypted_data)
 
@@ -116,14 +116,11 @@ class VPNClient:
                 encrypted_response = b''.join(response_chunks)
                 response = self.cipher.decrypt(encrypted_response)
                 client_conn.sendall(response)
-                logging.info(f"Data received from VPN server: {len(response)} bytes")
 
         except Exception as e:
             logging.error(f"An error occurred: {e}")
         finally:
             client_conn.close()
-
-
 
 if __name__ == "__main__":
     client = VPNClient('config.toml')

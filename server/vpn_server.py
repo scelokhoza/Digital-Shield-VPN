@@ -27,6 +27,10 @@ class VPNServer:
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
 
+        # Create SSL context
+        self.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        self.context.load_cert_chain(certfile=self.certfile, keyfile=self.keyfile)
+
     def start_vpn(self):
         try:
             self.server_socket.bind((self.server_address, self.port))
@@ -40,7 +44,10 @@ class VPNServer:
                 self.clients[client_address] = client_socket
                 self.client_traffic[client_address[0]] = 0
                 logging.info(f"Connection from {client_address}")
-                client_thread = threading.Thread(target=self.handle_client, args=(client_socket, client_address))
+
+                # Wrap the socket with SSL context
+                ssl_client_socket = self.context.wrap_socket(client_socket, server_side=True)
+                client_thread = threading.Thread(target=self.handle_client, args=(ssl_client_socket, client_address))
                 client_thread.start()
 
         except PermissionError as e:
@@ -50,16 +57,14 @@ class VPNServer:
         finally:
             self.server_socket.close()
 
-    def handle_client(self, client_socket, client_address):
+    def handle_client(self, ssl_client_socket, client_address):
         try:
-            client_socket.settimeout(100)
-            ssl_client_socket = ssl.wrap_socket(client_socket,
-                                                server_side=True,
-                                                certfile=self.certfile,
-                                                keyfile=self.keyfile,
-                                                ssl_version=ssl.PROTOCOL_TLS)
+            ssl_client_socket.settimeout(100)
             
+            # Send the server's public key to the client
             ssl_client_socket.sendall(self.public_pem)
+
+            # Receive the encrypted symmetric key from the client
             encrypted_symmetric_key = ssl_client_socket.recv(4096)
             symmetric_key = self.private_key.decrypt(
                 encrypted_symmetric_key,
@@ -76,6 +81,7 @@ class VPNServer:
                     encrypted_data = ssl_client_socket.recv(4096)
                     if not encrypted_data:
                         break
+
                     data = cipher.decrypt(encrypted_data)
                     self.client_traffic[client_address[0]] += len(data)
                     logging.info(f"Data received from {client_address}: {len(data)} bytes")
@@ -101,45 +107,85 @@ class VPNServer:
             logging.error(f"An error occurred during client handling: {e}")
         finally:
             ssl_client_socket.close()
-            client_socket.close()
             del self.clients[client_address]
 
     def forward_to_destination(self, data):
         try:
-            headers = data.split(b'\r\n')
-            host_header = next((h for h in headers if b'Host:' in h), None)
-            if not host_header:
-                raise ValueError("No Host header found")
-            
-            host = host_header.split(b' ')[1].decode('utf-8')
-            url = urlparse(f'http://{host}')
-            port = url.port or 80
-            if port == 443:
-                url = urlparse(f'https://{host}')
-            
-            destination_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            destination_socket.settimeout(30)
+            # Handle CONNECT requests
+            if data.startswith(b'CONNECT'):
+                # This is a CONNECT request, which is used to establish a tunnel
+                headers = data.split(b'\r\n')
+                host_header = next((h for h in headers if b'Host:' in h), None)
+                if not host_header:
+                    raise ValueError("No Host header found")
 
-            if url.scheme == 'https':
+                host = host_header.split(b' ')[1].decode('utf-8')
+                url = urlparse(f'https://{host}')
+                port = url.port or 443
+
+                destination_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                destination_socket.settimeout(30)
+
                 context = ssl.create_default_context()
                 destination_socket = context.wrap_socket(destination_socket, server_hostname=url.hostname)
-            
-            destination_socket.connect((url.hostname, port))
-            destination_socket.sendall(data)
-            
-            response_data = b""
-            while True:
-                chunk = destination_socket.recv(4096)
-                if not chunk:
-                    break
-                response_data += chunk
-            
-            destination_socket.close()
-            return response_data
-        
+
+                destination_socket.connect((url.hostname, port))
+
+                # Send 200 Connection Established response
+                response = b"HTTP/1.1 200 Connection Established\r\n\r\n"
+                self.ssl_client_socket.sendall(response)
+
+                # Read the data from the client and forward it to the destination
+                while True:
+                    client_data = self.ssl_client_socket.recv(4096)
+                    if not client_data:
+                        break
+                    destination_socket.sendall(client_data)
+
+                    response_data = destination_socket.recv(4096)
+                    if not response_data:
+                        break
+                    self.ssl_client_socket.sendall(response_data)
+
+                destination_socket.close()
+                return b""
+
+            else:
+                headers = data.split(b'\r\n')
+                host_header = next((h for h in headers if b'Host:' in h), None)
+                if not host_header:
+                    raise ValueError("No Host header found")
+
+                host = host_header.split(b' ')[1].decode('utf-8')
+                url = urlparse(f'http://{host}')
+                port = url.port or 80
+                if port == 443:
+                    url = urlparse(f'https://{host}')
+
+                destination_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                destination_socket.settimeout(30)
+
+                if url.scheme == 'https':
+                    context = ssl.create_default_context()
+                    destination_socket = context.wrap_socket(destination_socket, server_hostname=url.hostname)
+
+                destination_socket.connect((url.hostname, port))
+                destination_socket.sendall(data)
+
+                response_data = b""
+                while True:
+                    chunk = destination_socket.recv(4096)
+                    if not chunk:
+                        break
+                    response_data += chunk
+
+                destination_socket.close()
+                return response_data
+
         except Exception as e:
             logging.error(f"Error forwarding data to destination: {e}")
             return b""
+
 
     def admin_commands(self):
         while True:
@@ -188,6 +234,7 @@ class VPNServer:
             client_socket.close()
         self.server_socket.close()
         logging.info("Server shut down.")
+
 
 
 if __name__ == '__main__':
