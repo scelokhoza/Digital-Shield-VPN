@@ -14,3 +14,7 @@ Here’s how you might configure your browser to use the proxy correctly:
         Select Manual proxy configuration.
         Enter 127.0.0.1 for HTTP Proxy and 8888 for the port.
         Click OK to save and restart Firefox.
+
+
+
+

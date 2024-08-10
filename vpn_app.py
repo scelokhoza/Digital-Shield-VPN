@@ -15,20 +15,32 @@ CLIENT_ID = '278547284183-63g1jifusobhdlora3k55l8e63ovsars.apps.googleuserconten
 vpn_client = VPNClient('config.toml')
 
 
-@app.route('/google-login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def google_login():
-    token = request.json.get('id_token')
-    try:
-        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
+    if request.method == 'POST':
+        # Ensure Content-Type is application/json
+        if request.content_type != 'application/json':
+            return jsonify({'status': 'error', 'message': 'Unsupported Media Type'}), 415
 
-        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-            raise ValueError('Wrong issuer.')
+        token = request.json.get('id_token')
+        if not token:
+            return jsonify({'status': 'error', 'message': 'Token not provided'}), 400
 
-        userid = idinfo['sub']
-        return jsonify({'status': 'success', 'user_id': userid})
-    
-    except ValueError as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 401
+        try:
+            idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
+
+            if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+                raise ValueError('Wrong issuer.')
+
+            userid = idinfo['sub']
+            return jsonify({'status': 'success', 'user_id': userid})
+
+        except ValueError as e:
+            return jsonify({'status': 'error', 'message': str(e)}), 401
+
+    # If method is GET, render the login page (or handle accordingly)
+    return render_template('login.html')
+
 
 
 @app.route('/')

@@ -1,7 +1,7 @@
 function onSuccess(googleUser) {
     const id_token = googleUser.getAuthResponse().id_token;
 
-    fetch('/google-login', {
+    fetch('/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
