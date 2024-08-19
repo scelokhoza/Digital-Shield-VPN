@@ -1,4 +1,3 @@
-
 import os
 import json
 import ssl
@@ -36,10 +35,26 @@ vpn_client = VPNClient('config.toml')
 
 @app.route('/')
 def index():
+    """
+    Defines the root route of the application, rendering the index.html template.
+
+    Returns:
+        The rendered index.html template.
+    """
     return render_template('index.html')
 
 @app.route('/login', methods=['POST', 'GET'])
 def google_login():
+    """
+    Handles Google login requests.
+
+    This function handles both POST and GET requests to the /login route.
+    For POST requests, it verifies the provided ID token and returns the user's ID if successful.
+    For GET requests, it redirects the user to the Google authorization URL.
+
+    Returns:
+        A JSON response with the user's ID if the login is successful, or an error message otherwise.
+    """
     if request.method == 'POST':
         if request.content_type != 'application/json':
             return jsonify({'status': 'error', 'message': 'Unsupported Media Type'}), 415
@@ -66,6 +81,16 @@ def google_login():
 
 @app.route('/callback')
 def callback():
+    """
+    Handles the OAuth callback from Google.
+
+    This function is called when the user is redirected back to the application
+    after authorizing access. It fetches the authorization token, extracts the
+    credentials, and stores them in the session.
+
+    Returns:
+        A redirect to the index page.
+    """
     flow.fetch_token(authorization_response=request.url)
 
     credentials = flow.credentials
@@ -75,14 +100,46 @@ def callback():
 
 @app.route('/start_vpn')
 def start_page():
+    """
+    Route decorator for the '/start_vpn' endpoint.
+
+    This function is responsible for rendering the 'start_vpn.html' template.
+
+    Returns:
+        The rendered HTML template.
+    """
     return render_template('start_vpn.html')
 
 @app.route('/error')
 def error():
+    """
+    Route decorator for the '/error' endpoint.
+
+    This function is responsible for rendering the 'error.html' template.
+
+    Returns:
+        The rendered HTML template for the error page.
+    """
     return render_template('error.html')
 
 @app.route('/start-vpn', methods=['POST'])
 def start_vpn():
+    """
+    Route decorator for the '/start-vpn' endpoint with POST method.
+
+    This function is responsible for starting the VPN connection. It attempts to
+    establish a secure connection to the VPN server by calling the `connect_to_vpn`
+    method of the `vpn_client` object. If the connection is successful, it returns
+    a JSON response with a success status of `True`. If an SSL error or any other
+    exception occurs during the connection process, it returns a JSON response
+    with a success status of `False` and a 500 HTTP status code.
+
+    Returns:
+        A JSON response with a success status and an HTTP status code.
+
+    Raises:
+        None.
+    """
     try:
         vpn_client.connect_to_vpn()
         return jsonify({'success': True})
@@ -91,6 +148,20 @@ def start_vpn():
 
 @app.route('/stop-vpn', methods=['POST'])
 def stop_vpn():
+    """
+    Route decorator for the '/stop-vpn' endpoint with POST method.
+
+    This function is responsible for stopping the VPN connection. It attempts to
+    disconnect from the VPN server by calling the `disconnect_from_vpn` method of
+    the `vpn_client` object. If the disconnection is successful, it returns a JSON
+    response with a success status of `True`. If an exception occurs during the
+    disconnection process, it returns a JSON response with a success status of
+    `False`, an error message, and a 500 HTTP status code.
+
+    Returns:
+        A JSON response with a success status, an optional error message, and an
+        HTTP status code.
+    """
     try:
         vpn_client.disconnect_from_vpn()
         return jsonify({'success': True})
@@ -98,6 +169,21 @@ def stop_vpn():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 def credentials_to_dict(credentials):
+    """
+    Convert the given `credentials` object to a dictionary representation.
+
+    Args:
+        credentials (google.oauth2.credentials.Credentials): The credentials object to convert.
+
+    Returns:
+        dict: A dictionary containing the following keys:
+            - "token" (str): The access token.
+            - "refresh_token" (str): The refresh token.
+            - "token_uri" (str): The token URI.
+            - "client_id" (str): The client ID.
+            - "client_secret" (str): The client secret.
+            - "scopes" (List[str]): The list of scopes.
+    """
     return {
         "token": credentials.token,
         "refresh_token": credentials.refresh_token,

@@ -19,10 +19,25 @@ class VPNData:
     local_port: int
 
 class Configuration:
+    """
+    Initializes a Configuration object with a target file.
+
+    Args:
+        target_file (str): The path to the configuration file.
+
+    Returns:
+        None
+    """
     def __init__(self, target_file: str) -> None:
         self.file: str = target_file
 
     def load_config_data(self) -> VPNData:
+        """
+        Loads configuration data from a file and returns it as a VPNData object.
+
+        Returns:
+            VPNData: An object containing the server address, server hostname, port, and local port.
+        """
         with open(self.file, 'r') as config_file:
             config_data = toml.load(config_file)
 
@@ -35,6 +50,15 @@ class Configuration:
 
 class VPNClient:
     def __init__(self, config_file: str):
+        """
+        Initializes a VPNClient object with a target configuration file.
+
+        Args:
+            config_file (str): The path to the configuration file.
+
+        Returns:
+            None
+        """
         self.client_config = Configuration(config_file)
         self.configuration: VPNData = self.client_config.load_config_data()
         self.server_address = self.configuration.server_address
@@ -55,6 +79,19 @@ class VPNClient:
         self.is_running = False  # To track the state of the VPN
 
     def connect_to_vpn(self):
+        """
+        Establishes a secure connection to the VPN server.
+
+        Connects to the VPN server at the specified address and port, receives the server's public key,
+        encrypts the symmetric key with the server's public key, and sends it to the server.
+        Then, starts a local proxy to forward traffic through the VPN.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         try:
             self.secure_socket.connect((self.server_address, self.port))
             logging.info(f"Connected to VPN server at {self.server_address}:{self.port}")
@@ -87,6 +124,15 @@ class VPNClient:
             self.secure_socket.close()
 
     def start_local_proxy(self):
+        """
+        Starts a local proxy to forward traffic through the VPN.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         self.local_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.local_socket.bind(('127.0.0.1', self.local_port))
         self.local_socket.listen(5)
@@ -98,6 +144,20 @@ class VPNClient:
             threading.Thread(target=self.handle_local_connection, args=(client_conn,)).start()
 
     def handle_local_connection(self, client_conn):
+        """
+        Handles incoming connections from the local proxy.
+
+        This function is responsible for receiving data from the local connection
+        encrypting it, and sending it to the VPN server. It also receives the
+        response from the VPN server, decrypts it, and sends it back to the local
+        connection.
+
+        Args:
+            client_conn (socket): The local connection to handle.
+
+        Returns:
+            None
+        """
         try:
             while self.is_running:
                 data = client_conn.recv(4096)
@@ -126,6 +186,19 @@ class VPNClient:
             client_conn.close()
 
     def disconnect_from_vpn(self):
+        """
+        Disconnects from the VPN and stops the local proxy.
+
+        This method sets the `is_running` flag to False, closes the local socket if it exists,
+        and closes the secure socket if it exists. It also logs a message to indicate that
+        the VPN connection has been disconnected and the local proxy has been stopped.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         self.is_running = False
         if self.local_socket:
             self.local_socket.close()
