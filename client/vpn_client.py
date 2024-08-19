@@ -8,7 +8,6 @@ from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.fernet import Fernet
 
-
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 
@@ -44,6 +43,7 @@ class VPNClient:
         self.local_port = self.configuration.local_port
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.context = ssl.create_default_context()
+        self.local_socket = None  # Initialize to None, will be used in start_local_proxy
 
         # Disable hostname and certificate verification for self-signed certificates
         self.context.check_hostname = False
@@ -52,6 +52,7 @@ class VPNClient:
         self.secure_socket = self.context.wrap_socket(self.client_socket, server_hostname=self.server_hostname)
         self.symmetric_key = Fernet.generate_key()
         self.cipher = Fernet(self.symmetric_key)
+        self.is_running = False  # To track the state of the VPN
 
     def connect_to_vpn(self):
         try:
@@ -86,18 +87,19 @@ class VPNClient:
             self.secure_socket.close()
 
     def start_local_proxy(self):
-        local_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        local_socket.bind(('127.0.0.1', self.local_port))
-        local_socket.listen(5)
+        self.local_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.local_socket.bind(('127.0.0.1', self.local_port))
+        self.local_socket.listen(5)
         logging.info(f"Local proxy started on port {self.local_port}")
+        self.is_running = True
 
-        while True:
-            client_conn, client_addr = local_socket.accept()
+        while self.is_running:
+            client_conn, client_addr = self.local_socket.accept()
             threading.Thread(target=self.handle_local_connection, args=(client_conn,)).start()
 
     def handle_local_connection(self, client_conn):
         try:
-            while True:
+            while self.is_running:
                 data = client_conn.recv(4096)
                 if not data:
                     break
@@ -122,6 +124,16 @@ class VPNClient:
             logging.error(f"An error occurred: {e}")
         finally:
             client_conn.close()
+
+    def disconnect_from_vpn(self):
+        self.is_running = False
+        if self.local_socket:
+            self.local_socket.close()
+        if self.secure_socket:
+            self.secure_socket.close()
+        logging.info("Disconnected from VPN and stopped local proxy")
+
+
 
 if __name__ == "__main__":
     client = VPNClient('config.toml')

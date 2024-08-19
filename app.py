@@ -92,7 +92,7 @@ def start_vpn():
 @app.route('/stop-vpn', methods=['POST'])
 def stop_vpn():
     try:
-        # Implement logic to stop VPN
+        vpn_client.disconnect_from_vpn()
         return jsonify({'success': True})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -110,33 +110,3 @@ def credentials_to_dict(credentials):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-# Cython:
-
-#     Cython can convert Python code into C code, which is then compiled into a binary extension. This makes it more difficult to reverse-engineer.
-#     Installation:
-
-#     bash
-
-# pip install cython
-
-# Usage:
-# Create a setup file:
-
-# python
-
-# from setuptools import setup
-# from Cython.Build import cythonize
-
-# setup(
-#     ext_modules = cythonize("your_script.py")
-# )
-
-# Then, build the extension:
-
-# bash
-
-# python setup.py build_ext --inplace
-
-# This will produce a compiled .so or .pyd file that is much harder to reverse-engineer.
