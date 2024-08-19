@@ -1,5 +1,0 @@
-socket
-pyopenssl
-cryptography
-threading
-google.oauth2
