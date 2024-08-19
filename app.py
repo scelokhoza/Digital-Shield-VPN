@@ -89,6 +89,14 @@ def start_vpn():
     except (ssl.SSLError, Exception):
         return jsonify({'success': False}), 500
 
+@app.route('/stop-vpn', methods=['POST'])
+def stop_vpn():
+    try:
+        # Implement logic to stop VPN
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 def credentials_to_dict(credentials):
     return {
         "token": credentials.token,
