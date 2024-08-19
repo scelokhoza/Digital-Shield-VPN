@@ -18,8 +18,10 @@
     },
     "permissions": [
       "proxy",
+      "alarms",
       "storage",
       "activeTab",
+      "scripting",
       "webRequest",
       "webRequestBlocking",
       "http://*/*",

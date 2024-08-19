@@ -1,10 +1,10 @@
 import os
-import json
 import ssl
+import json
 from google.oauth2 import id_token
+from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request as google_Request
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-from google_auth_oauthlib.flow import Flow
 from client.vpn_client import VPNClient
 
 
@@ -96,7 +96,7 @@ def callback():
     credentials = flow.credentials
     session["credentials"] = credentials_to_dict(credentials)
 
-    return redirect(url_for('index'))
+    return redirect(url_for('start_page'))
 
 @app.route('/start_vpn')
 def start_page():
