@@ -1,14 +1,13 @@
 import ssl
-from flask import Flask, render_template, request, jsonify
-from client.vpn_client import VPNClient
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
+from flask import Flask, render_template, request, jsonify
+from client.vpn_client import VPNClient
+
 
 
 app = Flask(__name__)
-app.secret_key = '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'
 
-CLIENT_ID = '278547284183-63g1jifusobhdlora3k55l8e63ovsars.apps.googleusercontent.com'
 
 
 
