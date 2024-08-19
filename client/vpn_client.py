@@ -21,7 +21,7 @@ class VPNData:
 
 class Configuration:
     def __init__(self, target_file: str) -> None:
-        self.file = target_file
+        self.file: str = target_file
 
     def load_config_data(self) -> VPNData:
         with open(self.file, 'r') as config_file:
@@ -126,6 +126,3 @@ class VPNClient:
 if __name__ == "__main__":
     client = VPNClient('config.toml')
     client.connect_to_vpn()
-
-
-        
