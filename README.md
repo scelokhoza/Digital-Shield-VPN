@@ -139,4 +139,4 @@ The < Digital-Shield-VPN > development team really appreciates and thanks the ti
 
 ## License
 
-< Digital-Shield-VPN > is distributed under the [`BSD-2-Clause license`] license. See [`LICENSE`](https://unlicense.org) for more details.
+< Digital-Shield-VPN > is distributed under the [`BSD-2-Clause license`] license. See [[`LICENSE`](https://unlicense.org)](https://opensource.org/license/bsd-2-clause) for more details.
