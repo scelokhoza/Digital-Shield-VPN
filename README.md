@@ -2,6 +2,7 @@
 
 
 # Didital-Shield-VPN
+got to [Digital-Shield-VPN-Server](https://github.com/scelokhoza/Digital-Shield-VPN-Server) to run the vpn server
 
 
 [Didital-Shield-VPN]() is a program that helps protects your internet data by encrypting an d tunneling your data.
