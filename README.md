@@ -6,9 +6,10 @@
 
 [Didital-Shield-VPN]() is a program that helps protects your internet data by encrypting an d tunneling your data.
 
-![home-page](/home/scelo/Pictures/Screenshots/Screenshot from 2024-08-22 05-17-52.png)
+![Screenshot from 2024-08-22 05-17-52](https://github.com/user-attachments/assets/debf6bd7-0087-4502-9abb-6b918f6db2dc)
 
-![selection-page](/home/scelo/Pictures/Screenshots/Screenshot from 2024-08-22 05-18-34.png)
+![Screenshot from 2024-08-22 05-18-34](https://github.com/user-attachments/assets/dda5a277-b02b-4555-bdfe-4004380f01dd)
+
 
 
 
@@ -74,7 +75,8 @@ $ pip install -r requirements.txt
 $ python3 app.py
 ```
 You should see an ouput like this in your terminal:
-![execute](/home/scelo/Pictures/Screenshots/Screenshot from 2024-08-22 05-38-14.jpg)
+![Screenshot from 2024-08-22 05-38-14](https://github.com/user-attachments/assets/500b4ca9-11f3-4a59-b7b2-0ad84f083b06)
+
 
 Copy and paste the [`http:127.0.0.1:5000`] link to your browser of choice
 
