@@ -10,7 +10,7 @@ from client.vpn_client import VPNClient
 
 
 app = Flask(__name__)
-app.secret_key = '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'
+app.secret_key = os.getenv("SECRET_KEY")
 
 
 with open("client_secret.json") as f:
