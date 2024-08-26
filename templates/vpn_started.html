@@ -6,44 +6,110 @@
     <title>VPN Started</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: lightblue;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
-        }
-        .container {
+            padding: 5vh 5vw;
+            background: black;
+            overflow:hidden;
+          }
+          * {
+            box-sizing: border-box;
+          }
+          p {
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 4.1vh;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+            color: limegreen;
+            text-shadow: 0px 0px 10px limegreen;
+          }
+          .msg {
+            font-family: monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 5vh;
+            padding-top: 5vh;
+            background: red;
+            box-shadow: 0 0 30px red;
+            text-shadow: 0 0 20px white;
+            color: white;
+            padding : 20px;
+            position: absolute;
+            left: 50%;
+            margin-left: -10vw;
+            top: 50%;
+            margin-top: -5vh;
             text-align: center;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 80%;
-        }
-        h1 {
-            color: #4CAF50;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-        p {
-            color: #666;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-        .icon {
-            font-size: 4rem;
-            color: #4CAF50; /* Green color */
-        }
+            min-width: 200px;
+            animation-name: blink;
+            animation-duration: 0.6s;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+            animation-timing-function: linear;
+          }
+          @keyframes blink {
+            0% {
+              opacity: 0;
+            }
+            100% {
+              opacity: 1;
+            }
+          }
     </style>
 </head>
 <body>
-    <div class="container">
-        <i class="icon fa fa-check-circle"></i>
-        <h1>VPN Started Successfully!</h1>
-        <p>Your VPN service is now active.</p>
-        <p>Enjoy secure and private browsing.</p>
-    </div>
+    <div class="msg">Scanning</div>
+    <div id="console"></div>
+    <script>
+        var intervalID = window.setInterval(updateScreen, 200);
+        var console = document.getElementById("console");
+        const msg = document.querySelector(".msg");
+
+        var txt = [
+        "FORCE: XX0022. ENCYPT://000.222.2345",
+        "TRYPASS: ********* AUTH CODE: ALPHA GAMMA: 1___ PRIORITY 1",
+        "RETRY: REINDEER FLOTILLA",
+        "Z:> /FALKEN/GAMES/TICTACTOE/ EXECUTE -PLAYERS 0",
+        "================================================",
+        "Priority 1 // local / scanning...",
+        "scanning ports...",
+        "BACKDOOR FOUND (23.45.23.12.00000000)",
+        "BACKDOOR FOUND (13.66.23.12.00110000)",
+        "BACKDOOR FOUND (13.66.23.12.00110044)",
+        "...",
+        "...",
+        "BRUTE.EXE -r -z",
+        "...locating vulnerabilities...",
+        "...vulnerabilities found...",
+        "MCP/> DEPLOY CLU",
+        "SCAN: __ 0100.0000.0554.0080",
+        "SCAN: __ 0020.0000.0553.0080",
+        "SCAN: __ 0001.0000.0554.0550",
+        "SCAN: __ 0012.0000.0553.0030",
+        "SCAN: __ 0100.0000.0554.0080",
+        "SCAN: __ 0020.0000.0553.0080",
+        ]
+
+        var docfrag = document.createDocumentFragment();
+
+        function updateScreen() {
+        txt.push(txt.shift());
+        txt.forEach(function(e) {
+            var p = document.createElement("p");
+            p.textContent = e;
+            docfrag.appendChild(p);
+        });
+        while (console.firstChild) {
+            console.removeChild(console.firstChild);
+        }
+        console.appendChild(docfrag);
+        }
+
+        setTimeout(() => { msg.style.background = "limegreen";
+        msg.innerHTML = "DIGITAL SHIELD IS RUNNING";
+        msg.style.boxShadow = "0 0 30px limegreen";
+        console.style.display = "none";}, 5000);
+    </script>
 </body>
 </html>
