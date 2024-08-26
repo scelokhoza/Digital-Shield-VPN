@@ -9,7 +9,8 @@ got to [Digital-Shield-VPN-Server](https://github.com/scelokhoza/Digital-Shield-
 
 ![Screenshot from 2024-08-22 05-17-52](https://github.com/user-attachments/assets/debf6bd7-0087-4502-9abb-6b918f6db2dc)
 
-![Screenshot from 2024-08-22 05-18-34](https://github.com/user-attachments/assets/dda5a277-b02b-4555-bdfe-4004380f01dd)
+![Screenshot from 2024-08-26 14-17-24](https://github.com/user-attachments/assets/4ede21d5-aa6c-4abc-8346-dcd295818b70)
+
 
 
 
