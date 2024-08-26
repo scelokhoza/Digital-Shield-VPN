@@ -9,12 +9,12 @@
             margin: 0;
             padding: 5vh 5vw;
             background: black;
-            overflow:hidden;
-          }
-          * {
+            overflow: hidden;
+        }
+        * {
             box-sizing: border-box;
-          }
-          p {
+        }
+        p {
             font-family: monospace;
             font-weight: bold;
             font-size: 4.1vh;
@@ -23,18 +23,18 @@
             line-height: 1;
             color: limegreen;
             text-shadow: 0px 0px 10px limegreen;
-          }
-          .msg {
+        }
+        .msg {
             font-family: monospace;
             font-weight: bold;
             text-transform: uppercase;
             font-size: 5vh;
             padding-top: 5vh;
-            background: red;
-            box-shadow: 0 0 30px red;
+            background: green;
+            box-shadow: 0 0 30px black transparent;
             text-shadow: 0 0 20px white;
             color: white;
-            padding : 20px;
+            padding: 20px;
             position: absolute;
             left: 50%;
             margin-left: -10vw;
@@ -47,70 +47,94 @@
             animation-iteration-count: infinite;
             animation-direction: alternate;
             animation-timing-function: linear;
-          }
-          @keyframes blink {
+        }
+        @keyframes blink {
             0% {
-              opacity: 0;
+                opacity: 0;
             }
             100% {
-              opacity: 1;
+                opacity: 1;
             }
-          }
+        }
+        .disconnect-btn {
+            position: absolute;
+            bottom: 10vh;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 1.5em;
+            background-color: crimson;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 0 20px crimson;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .disconnect-btn:hover {
+            background-color: darkred;
+            box-shadow: 0 0 30px darkred;
+        }
     </style>
 </head>
 <body>
-    <div class="msg">Scanning</div>
+    <div class="msg">Digital-Shield Connected</div>
     <div id="console"></div>
+    <button class="disconnect-btn">Disconnect</button>
     <script>
         var intervalID = window.setInterval(updateScreen, 200);
         var console = document.getElementById("console");
         const msg = document.querySelector(".msg");
 
         var txt = [
-    "DIGITAL SHIELD INITIATED: PROTOCOL DS_0022. ENCRYPT://128.456.7890",
-    "SECUREPASS: ********* AUTH CODE: DELTA OMEGA: 9___ PRIORITY LEVEL: ULTRA",
-    "ESTABLISHING DIGITAL SHIELD CONNECTION...",
-    "Z:> /DIGITAL/SHIELD/ACTIVATE/ INITIATE -SECURITY PROTOCOL 1",
-    "================================================",
-    "Priority ULTRA // DIGITAL SHIELD / scanning...",
-    "scanning all ports...",
-    "VULNERABILITY DETECTED (45.67.89.01.11001000)",
-    "VULNERABILITY DETECTED (23.45.67.89.00110100)",
-    "VULNERABILITY DETECTED (34.56.78.90.00110044)",
-    "...",
-    "...",
-    "SHIELD.EXE -secure -z",
-    "...analyzing network defenses...",
-    "...threats neutralized...",
-    "DIGITALSHIELD/> DEPLOY DEFENSES",
-    "SCAN: __ 0100.0011.2554.0780",
-    "SCAN: __ 0020.0009.1553.0080",
-    "SCAN: __ 0001.0033.0554.0550",
-    "SCAN: __ 0012.0067.3553.0030",
-    "SCAN: __ 0100.0099.6554.0980",
-    "SCAN: __ 0020.0077.3553.0080",
-];
-
+            "DIGITAL SHIELD INITIATED: PROTOCOL DS_0022. ENCRYPT://128.456.7890",
+            "SECUREPASS: ********* AUTH CODE: DELTA OMEGA: 9___ PRIORITY LEVEL: ULTRA",
+            "ESTABLISHING DIGITAL SHIELD CONNECTION...",
+            "Z:> /DIGITAL/SHIELD/ACTIVATE/ INITIATE -SECURITY PROTOCOL 1",
+            "================================================",
+            "Priority ULTRA // DIGITAL SHIELD / scanning...",
+            "scanning all ports...",
+            "VULNERABILITY DETECTED (45.67.89.01.11001000)",
+            "VULNERABILITY DETECTED (23.45.67.89.00110100)",
+            "VULNERABILITY DETECTED (34.56.78.90.00110044)",
+            "SEVERITY LEVEL: CRITICAL // IMMEDIATE RESPONSE REQUIRED",
+            "REINFORCING FIREWALL LAYERS...",
+            "SHIELD.EXE -secure -z",
+            "...analyzing network defenses...",
+            "...intrusion attempt detected... neutralizing...",
+            "DIGITALSHIELD/> DEPLOY DEFENSES",
+            "SCAN: __ 0100.0011.2554.0780",
+            "SCAN: __ 0020.0009.1553.0080",
+            "SCAN: __ 0001.0033.0554.0550",
+            "SCAN: __ 0012.0067.3553.0030",
+            "SCAN: __ 0100.0099.6554.0980",
+            "SCAN: __ 0020.0077.3553.0080",
+            "SHIELD STATUS: ALL SYSTEMS GO // CONTINUOUS MONITORING ACTIVE",
+        ];
 
         var docfrag = document.createDocumentFragment();
 
         function updateScreen() {
-        txt.push(txt.shift());
-        txt.forEach(function(e) {
-            var p = document.createElement("p");
-            p.textContent = e;
-            docfrag.appendChild(p);
-        });
-        while (console.firstChild) {
-            console.removeChild(console.firstChild);
-        }
-        console.appendChild(docfrag);
+            txt.push(txt.shift());
+            txt.forEach(function(e) {
+                var p = document.createElement("p");
+                p.textContent = e;
+                docfrag.appendChild(p);
+            });
+            while (console.firstChild) {
+                console.removeChild(console.firstChild);
+            }
+            console.appendChild(docfrag);
         }
 
-        setTimeout(() => { msg.style.background = "limegreen";
-        msg.innerHTML = "DIGITAL SHIELD IS RUNNING";
-        msg.style.boxShadow = "0 0 30px limegreen";
-        console.style.display = "none";}, 5000);
+        document.querySelector('.disconnect-btn').addEventListener('click', function() {
+            fetch('/stop-vpn', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+              alert('Disconnecting the VPN...');
+              location.href = '/index';
+            }
+        });
     </script>
 </body>
 </html>
