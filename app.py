@@ -70,6 +70,9 @@ def google_login():
                 raise ValueError('Wrong issuer.')
 
             userid = idinfo['sub']
+            session['user_id'] = userid
+            session['user_name'] = idinfo['name']
+            session['user_picture'] = idinfo['picture']
             return jsonify({'status': 'success', 'user_id': userid})
 
         except ValueError as e:
@@ -122,7 +125,7 @@ def error():
     """
     return render_template('error.html')
 
-@app.route('/start_vpn', methods=['POST'])
+@app.route('/start-vpn', methods=['POST'])
 def start_vpn():
     """
     Route decorator for the '/start-vpn' endpoint with POST method.

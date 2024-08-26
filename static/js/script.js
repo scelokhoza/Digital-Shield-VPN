@@ -12,6 +12,17 @@ function onSuccess(googleUser) {
     .then(data => {
         if (data.status === 'success') {
             console.log('User logged in with Google. User ID:', data.user_id);
+
+            // Display the user's Google profile picture and name
+            const profile = googleUser.getBasicProfile();
+            const profilePicture = profile.getImageUrl();
+            const fullName = profile.getName();
+
+            document.getElementById('user-profile').innerHTML = `
+                <img src="${profilePicture}" alt="${fullName}" style="border-radius: 50%; width: 40px; height: 40px;">
+                <span>${fullName}</span>
+            `;
+
             window.location.href = '/start_vpn';
         } else {
             console.error('Google login failed:', data.message);
@@ -22,6 +33,7 @@ function onSuccess(googleUser) {
         console.error('Error logging in with Google:', error);
     });
 }
+
 
 function onFailure(error) {
     console.error('Google Sign-In failed:', error);
