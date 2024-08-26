@@ -127,13 +127,14 @@
             console.appendChild(docfrag);
         }
 
+        // Keep the initial animation running indefinitely
+        // Optionally, you can add logic here to change the animation or message later
+
+        // Add logic for the disconnect button
         document.querySelector('.disconnect-btn').addEventListener('click', function() {
-            fetch('/stop-vpn', { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-              alert('Disconnecting the VPN...');
-              location.href = '/index';
-            }
+          fetch('/stop-vpn', { method: 'POST' })
+            alert('Disconnecting the VPN...');
+            location.href = '/index';
         });
     </script>
 </body>
