@@ -122,7 +122,7 @@ def error():
     """
     return render_template('error.html')
 
-@app.route('/start-vpn', methods=['POST'])
+@app.route('/start_vpn', methods=['POST'])
 def start_vpn():
     """
     Route decorator for the '/start-vpn' endpoint with POST method.

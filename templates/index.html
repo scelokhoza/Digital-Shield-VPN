@@ -6,25 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        .feature , .service{
-            background-color: #f8f9fa;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .feature p, .service p {
-            display: none;
-            margin-top: 10px;
-        }
-
-        .feature h3 , .service h3{
-            cursor: pointer;
-            margin: 0;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -126,27 +107,27 @@
         <p>&copy; 2024 Digital Shield VPN. All Rights Reserved.</p>
     </footer>
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const features = document.querySelectorAll('.feature');
-        const services = document.querySelectorAll('.service');
+        document.addEventListener('DOMContentLoaded', () => {
+            const features = document.querySelectorAll('.feature');
+            const services = document.querySelectorAll('.service');
 
-        const toggleParagraph = (element) => {
-            const p = element.querySelector('p');
-            p.style.display = p.style.display === 'block' ? 'none' : 'block';
-        };
+            const toggleParagraph = (element) => {
+                const p = element.querySelector('p');
+                p.style.display = p.style.display === 'block' ? 'none' : 'block';
+            };
 
-        features.forEach(feature => {
-            feature.querySelector('h3').addEventListener('click', () => {
-                toggleParagraph(feature);
+            features.forEach(feature => {
+                feature.querySelector('h3').addEventListener('click', () => {
+                    toggleParagraph(feature);
+                });
+            });
+
+            services.forEach(service => {
+                service.querySelector('h3').addEventListener('click', () => {
+                    toggleParagraph(service);
+                });
             });
         });
-
-        services.forEach(service => {
-            service.querySelector('h3').addEventListener('click', () => {
-                toggleParagraph(service);
-            });
-        });
-    });
 </script>
 </body>
 </html>
