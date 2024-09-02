@@ -3,19 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital-Shield Extension</title>
+    <title>Digital-Shield VPN</title>
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
     <div id="popup-container">
-        <h1 id="vpn-title">Digital-Shield</h1>
+        <div id="header">
+            <div id="menu-icon">&#9776;</div>
+            <h1 id="vpn-title">Digital-Shield VPN</h1>
+        </div>
 
         <div id="status-container">
-            <span id="status-label">Status:</span>
-            <span id="vpn-status">Disconnected</span>
+            <div id="status-circle"></div>
+            <span id="vpn-status">VPN is OFF</span>
+        </div>
+
+        <div id="server-info">
+            <p id="location">Amsterdam, Netherlands</p>
+            <p id="ip-address">Your IP: 192.168.0.1</p>
         </div>
 
         <button id="vpn-toggle" onclick="toggleVPN()">Connect</button>
+
+        <div id="upgrade-container">
+            <p>Servers from 89+ countries</p>
+            <p>Unlimited speed</p>
+            <p>Optimized streaming servers</p>
+            <button id="upgrade-button">Upgrade to Pro</button>
+        </div>
     </div>
 
     <script src="popup.js"></script>

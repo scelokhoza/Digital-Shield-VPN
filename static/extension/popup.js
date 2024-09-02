@@ -1,8 +1,9 @@
 function toggleVPN() {
     const statusElement = document.getElementById('vpn-status');
+    const statusCircle = document.getElementById('status-circle');
     const toggleButton = document.getElementById('vpn-toggle');
 
-    if (statusElement.textContent === 'Disconnected') {
+    if (statusElement.textContent === 'VPN is OFF') {
         // Send request to Flask server to connect to VPN
         fetch('http://localhost:5000/start-vpn', {
             method: 'POST',
@@ -12,8 +13,8 @@ function toggleVPN() {
         })
         .then(response => {
             if (response.ok) {
-                statusElement.textContent = 'Connected';
-                statusElement.style.color = 'green';
+                statusElement.textContent = 'VPN is ON';
+                statusCircle.style.backgroundColor = '#28a745'; // Green color for ON
                 toggleButton.textContent = 'Disconnect';
             } else {
                 throw new Error('Failed to connect to VPN');
@@ -22,7 +23,7 @@ function toggleVPN() {
         .catch(error => {
             console.error('Error:', error);
             statusElement.textContent = 'Connection Failed';
-            statusElement.style.color = 'red';
+            statusCircle.style.backgroundColor = '#ff4d4f'; // Red color for failed connection
         });
     } else {
         // Send request to Flask server to disconnect from VPN
@@ -34,8 +35,8 @@ function toggleVPN() {
         })
         .then(response => {
             if (response.ok) {
-                statusElement.textContent = 'Disconnected';
-                statusElement.style.color = 'red';
+                statusElement.textContent = 'VPN is OFF';
+                statusCircle.style.backgroundColor = '#ff4d4f'; // Red color for OFF
                 toggleButton.textContent = 'Connect';
             } else {
                 throw new Error('Failed to disconnect from VPN');
@@ -44,7 +45,7 @@ function toggleVPN() {
         .catch(error => {
             console.error('Error:', error);
             statusElement.textContent = 'Disconnection Failed';
-            statusElement.style.color = 'red';
+            statusCircle.style.backgroundColor = '#ff4d4f'; // Red color for failed disconnection
         });
     }
 }

@@ -1,49 +1,93 @@
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
-    width: 200px;
-    height: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f7f7f7;
+    font-family: Arial, sans-serif;
 }
 
 #popup-container {
-    text-align: center;
-    padding: 10px;
+    width: 300px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#vpn-title {
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: #333;
-}
-
-#status-container {
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
 }
 
-#status-label {
-    font-weight: bold;
+#menu-icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+#vpn-title {
+    margin: 0;
+    font-size: 18px;
+}
+
+#status-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#status-circle {
+    width: 12px;
+    height: 12px;
+    background-color: #ff4d4f;
+    border-radius: 50%;
+    margin-right: 10px;
 }
 
 #vpn-status {
-    font-weight: bold;
-    color: red;
+    font-size: 14px;
+}
+
+#server-info {
+    margin-bottom: 20px;
+}
+
+#location {
+    font-size: 14px;
+    margin: 0;
+}
+
+#ip-address {
+    font-size: 12px;
+    color: #6c757d;
+    margin: 5px 0 0;
 }
 
 #vpn-toggle {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #fff;
+    width: 100%;
+    padding: 10px;
     background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+#vpn-toggle:hover {
+    background-color: #0056b3;
+}
+
+#upgrade-container {
+    text-align: center;
+}
+
+#upgrade-button {
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 
-#vpn-toggle:active {
-    background-color: #0056b3;
+#upgrade-button:hover {
+    background-color: #218838;
 }
